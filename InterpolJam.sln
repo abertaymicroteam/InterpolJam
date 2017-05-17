@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterpolJam.CSharp", "InterpolJam.CSharp.csproj", "{54695EAD-1635-052E-3B8C-5440F01C209E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54695EAD-1635-052E-3B8C-5440F01C209E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54695EAD-1635-052E-3B8C-5440F01C209E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54695EAD-1635-052E-3B8C-5440F01C209E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54695EAD-1635-052E-3B8C-5440F01C209E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
