@@ -79,8 +79,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\BasicIcon.cs" />
+    <Compile Include="Assets\Scripts\Continentclicker.cs" />
+    <Compile Include="Assets\Scripts\Contract.cs" />
     <Compile Include="Assets\Scripts\WindowManager.cs" />
+    <Compile Include="Assets\Scripts\colourChanger.cs" />
     <Compile Include="Assets\Scripts\gameManager.cs" />
+    <Compile Include="Assets\Scripts\popUp.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
