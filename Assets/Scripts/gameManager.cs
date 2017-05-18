@@ -18,7 +18,8 @@ public class gameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		money = 1000;
+        
+		money = 300;
 		moneyDisplay.text = "$" + money;
 		jobActive = false;
 
@@ -123,7 +124,7 @@ public class gameManager : MonoBehaviour {
 	{
         for (int i = 0; i < 6; i++)
         {
-            resourceGained((500 * Workers[i, 0]) + (1250 * Workers[i, 1]) + (3000 * Workers[i, 2]));
+            resourceGained((25 * Workers[i, 0]) + (50 * Workers[i, 1]) + (100 * Workers[i, 2]));
         }
 	}
 

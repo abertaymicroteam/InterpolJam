@@ -81,6 +81,8 @@
     <Compile Include="Assets\Scripts\BasicIcon.cs" />
     <Compile Include="Assets\Scripts\Continentclicker.cs" />
     <Compile Include="Assets\Scripts\Contract.cs" />
+    <Compile Include="Assets\Scripts\NewsScript.cs" />
+    <Compile Include="Assets\Scripts\Notification.cs" />
     <Compile Include="Assets\Scripts\WindowManager.cs" />
     <Compile Include="Assets\Scripts\colourChanger.cs" />
     <Compile Include="Assets\Scripts\gameManager.cs" />

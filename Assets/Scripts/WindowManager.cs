@@ -93,10 +93,19 @@ public class WindowManager : MonoBehaviour {
     [SerializeField]
     public Contract[,] contracts = new Contract[4,6];
     public Rect[] boxes;
-
+    public Notification News;
+    public NewsScript NewsPaper;
+    public float investigationTimer;
+    public int option;
+    public int Reds;
+    public GUIStyle[,] gStyle;
+    public Texture2D red, blue;
 
     public void Start() {
+        GUIStyle[,] gStyle = new GUIStyle[4,6];
 
+   
+        Reds = 0;
 
         Rect[] boxes = new Rect[4];
 
@@ -131,8 +140,9 @@ public class WindowManager : MonoBehaviour {
     }
     public void Update() 
     {
+        
 
-        for(int i = 0; i < Continents.Length; i++)
+        for (int i = 0; i < Continents.Length; i++)
         {
             Continents[i].window.width = Screen.width * 0.5f;
             Continents[i].window.height = (Screen.height / 9) * 4;
@@ -146,19 +156,17 @@ public class WindowManager : MonoBehaviour {
         Windows[1].x = (Screen.width - Windows[1].width) / 2;
         Windows[1].y = ((Screen.height - Windows[1].height) / 2) - (Screen.height / 9);
 
-        //boxes[0] = new Rect(Continents[2].window.width / 3, 0, Continents[2].window.width * 0.6f, 0);
-        //boxes[1] = new Rect(Continents[2].window.width / 3, 0, Continents[2].window.width * 0.6f, Continents[0].window.height / 3);
-        //boxes[2] = new Rect(Continents[2].window.width / 3, 0, Continents[2].window.width * 0.6f, (Continents[0].window.height / 3) * 2);
-        //boxes[3] = new Rect(0, 0, 0, 0);
 
         investigation();
+
+        
 
 
     }
 
     void OnGUI()
     {
-        if (showWindow != 0)
+        if (showWindow > 1)
         {
             switch (showWindow) {
                 case 1: 
@@ -177,21 +185,22 @@ public class WindowManager : MonoBehaviour {
                     break;
             }
 
-            GUIopen = true;
-            if (investigating)
-            {
-                showWindow = 1;
-                Windows[1] = GUI.Window(1, Windows[1], Character, "Notifications");
-                
-            }
+            GUIopen = true;      
         }
-        else{
+        else if (showWindow == 0){
             GUIopen = false;
         }
+
+       
     }
 
     void DoMyWindow(int windowID)
     {
+
+        
+          
+        
+
         if (GUI.Button(new Rect(100, Continents[showWindow].window.height - 30, 100, 20), "Dismiss"))
         {
             showWindow = 0;
@@ -206,106 +215,138 @@ public class WindowManager : MonoBehaviour {
         {
             if (Continents[showWindow].Workers != null)
             {
-                if (Continents[showWindow].Workers[i].character.Contains(Event.current.mousePosition))
+
+               
+                if (contracts[i, showWindow-2].wantedLevel == 2)
                 {
-
-                    if (Event.current.type == EventType.MouseDown)
+                    switch (Continents[showWindow].Workers[i].jobLevel)
                     {
-                        Continents[showWindow].holder = Continents[showWindow].Workers[i].character;
-                        Continents[showWindow].Workers[i].pressed = true;
-
-                        switch (Continents[showWindow].Workers[i].jobLevel)
-                        {
-                            case 1:
-                                Continents[showWindow].Workers[i].jobLevel = 0;
-                                Continents[showWindow].easyWorkers--;
-                                break;
-                            case 2:
-                                Continents[showWindow].Workers[i].jobLevel = 0;
-                                Continents[showWindow].mediumWorkers--;
-                                break;
-                            case 3:
-                                Continents[showWindow].Workers[i].jobLevel = 0;
-                                Continents[showWindow].hardWorkers--;
-                                break;
-                        }
-
-                        contracts[i, showWindow - 2].jobLevel = 0;
-
+                        case 1:
+                            Continents[showWindow].easyWorkers--;
+                            break;
+                        case 2:
+                            Continents[showWindow].mediumWorkers--;
+                            break;
+                        case 3:
+                            Continents[showWindow].hardWorkers--;
+                            break;
                     }
-
-                    if (Event.current.type == EventType.MouseUp)
-                    {
-                        Continents[showWindow].Workers[i].pressed = false;
-
-                        if (Continents[showWindow].Slots[0].Contains(Event.current.mousePosition) && gameMan.money >= 250.0f)
-                        {
-                            Continents[showWindow].Workers[i].character.y = (Continents[showWindow].Slots[0].y + Continents[showWindow].Slots[0].height / 2) - Continents[showWindow].Workers[i].character.height / 2;
-                            Continents[showWindow].easyWorkers++;
-                            Continents[showWindow].Workers[i].jobLevel = 1;
-                            contracts[i, showWindow - 2].jobLevel = 1;
-                        }
-                        else if (Continents[showWindow].Slots[0].Contains(Event.current.mousePosition) && gameMan.money < 250.0f)
-                        {
-                            gameMan.bankruptcyEntered();
-                            Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
-                            Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
-                        }
-                        else if (Continents[showWindow].Slots[1].Contains(Event.current.mousePosition) && gameMan.money >= 500.0f)
-                        {
-                            Continents[showWindow].Workers[i].character.y = (Continents[showWindow].Slots[1].y + Continents[showWindow].Slots[1].height / 2) - Continents[showWindow].Workers[i].character.height / 2;
-                            Continents[showWindow].mediumWorkers++;
-                            Continents[showWindow].Workers[i].jobLevel = 2;
-                            contracts[i, showWindow - 2].jobLevel = 2;
-                        }
-                        else if (Continents[showWindow].Slots[1].Contains(Event.current.mousePosition) && gameMan.money < 500.0f)
-                        {
-                            gameMan.bankruptcyEntered();
-                            Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
-                            Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
-                        }
-                        else if (Continents[showWindow].Slots[2].Contains(Event.current.mousePosition) && gameMan.money >= 1000.0f)
-                        {
-                            Continents[showWindow].Workers[i].character.y = (Continents[showWindow].Slots[2].y + Continents[showWindow].Slots[2].height / 2) - Continents[showWindow].Workers[i].character.height / 2;
-                            Continents[showWindow].hardWorkers++;
-                            Continents[showWindow].Workers[i].jobLevel = 3;
-                            contracts[i, showWindow - 2].jobLevel = 3;
-                        }
-                        else if (Continents[showWindow].Slots[2].Contains(Event.current.mousePosition) && gameMan.money < 1000.0f)
-                        {
-                            gameMan.bankruptcyEntered();
-                            Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
-                            Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
-                        }
-                        else if (Continents[showWindow].Slots[3].Contains(Event.current.mousePosition))
-                        {
-                            Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
-                            Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
-                        }
-                        else
-                        {
-                            Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
-                            Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
-                        }
-                    }
+                    Continents[showWindow].Workers[i].jobLevel = 0;
+                    contracts[i, showWindow - 2].jobLevel = 0;
+                    Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
+                    Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
+                    GUI.color = Color.red;
                 }
-                if (Continents[showWindow].Workers[i].pressed && Event.current.type == EventType.MouseDrag)
+                if (contracts[i, showWindow - 2].wantedLevel == 1)
                 {
-                    Continents[showWindow].Workers[i].character.x += Event.current.delta.x;
-                    Continents[showWindow].Workers[i].character.y += Event.current.delta.y;
+                    GUI.color = Color.blue;
+                }
+
+                if (contracts[i, showWindow - 2].wantedLevel < 2)
+                {
+                    if (Continents[showWindow].Workers[i].character.Contains(Event.current.mousePosition))
+                    {
+
+                        if (Event.current.type == EventType.MouseDown)
+                        {
+                            if (contracts[i, showWindow-2].wantedLevel != 2)
+                            {
+                                Continents[showWindow].holder = Continents[showWindow].Workers[i].character;
+                                Continents[showWindow].Workers[i].pressed = true;
+
+                                switch (Continents[showWindow].Workers[i].jobLevel)
+                                {
+                                    case 1:
+                                        Continents[showWindow].Workers[i].jobLevel = 0;
+                                        Continents[showWindow].easyWorkers--;
+                                        break;
+                                    case 2:
+                                        Continents[showWindow].Workers[i].jobLevel = 0;
+                                        Continents[showWindow].mediumWorkers--;
+                                        break;
+                                    case 3:
+                                        Continents[showWindow].Workers[i].jobLevel = 0;
+                                        Continents[showWindow].hardWorkers--;
+                                        break;
+                                }
+
+                                contracts[i, showWindow - 2].jobLevel = 0;
+                            }
+
+                        }
+
+                        if (Event.current.type == EventType.MouseUp)
+                        {
+                            Continents[showWindow].Workers[i].pressed = false;
+
+                            if (Continents[showWindow].Slots[0].Contains(Event.current.mousePosition) && gameMan.money >= 250.0f)
+                            {
+                                Continents[showWindow].Workers[i].character.y = (Continents[showWindow].Slots[0].y + Continents[showWindow].Slots[0].height / 2) - Continents[showWindow].Workers[i].character.height / 2;
+                                Continents[showWindow].easyWorkers++;
+                                Continents[showWindow].Workers[i].jobLevel = 1;
+                                contracts[i, showWindow - 2].jobLevel = 1;
+                            }
+                            else if (Continents[showWindow].Slots[0].Contains(Event.current.mousePosition) && gameMan.money < 250.0f)
+                            {
+                                gameMan.bankruptcyEntered();
+                                Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
+                                Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
+                            }
+                            else if (Continents[showWindow].Slots[1].Contains(Event.current.mousePosition) && gameMan.money >= 500.0f)
+                            {
+                                Continents[showWindow].Workers[i].character.y = (Continents[showWindow].Slots[1].y + Continents[showWindow].Slots[1].height / 2) - Continents[showWindow].Workers[i].character.height / 2;
+                                Continents[showWindow].mediumWorkers++;
+                                Continents[showWindow].Workers[i].jobLevel = 2;
+                                contracts[i, showWindow - 2].jobLevel = 2;
+                            }
+                            else if (Continents[showWindow].Slots[1].Contains(Event.current.mousePosition) && gameMan.money < 500.0f)
+                            {
+                                gameMan.bankruptcyEntered();
+                                Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
+                                Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
+                            }
+                            else if (Continents[showWindow].Slots[2].Contains(Event.current.mousePosition) && gameMan.money >= 1000.0f)
+                            {
+                                Continents[showWindow].Workers[i].character.y = (Continents[showWindow].Slots[2].y + Continents[showWindow].Slots[2].height / 2) - Continents[showWindow].Workers[i].character.height / 2;
+                                Continents[showWindow].hardWorkers++;
+                                Continents[showWindow].Workers[i].jobLevel = 3;
+                                contracts[i, showWindow - 2].jobLevel = 3;
+                            }
+                            else if (Continents[showWindow].Slots[2].Contains(Event.current.mousePosition) && gameMan.money < 1000.0f)
+                            {
+                                gameMan.bankruptcyEntered();
+                                Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
+                                Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
+                            }
+                            else if (Continents[showWindow].Slots[3].Contains(Event.current.mousePosition))
+                            {
+                                Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
+                                Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
+                            }
+                            else
+                            {
+                                Continents[showWindow].Workers[i].character.x = Continents[showWindow].Workers[i].startingPosition.x;
+                                Continents[showWindow].Workers[i].character.y = Continents[showWindow].Workers[i].startingPosition.y;
+                            }
+                        }
+                    }
+                    if (Continents[showWindow].Workers[i].pressed && Event.current.type == EventType.MouseDrag)
+                    {
+                        if (contracts[i, showWindow-2].wantedLevel != 2)
+                        {
+                            Continents[showWindow].Workers[i].character.x += Event.current.delta.x;
+                            Continents[showWindow].Workers[i].character.y += Event.current.delta.y;
+                        }
+                    }
                 }
             }
             Continents[showWindow].updateWindows();
             if (Continents[showWindow].Workers != null)
             {
                 GUI.Button(Continents[showWindow].Workers[i].character, "Char");
-            }   
+            }
+            GUI.color = Color.white;
         }
-    }
-
-    void Character(int windowID)
-    {
-       
     }
 
     public void chooseWindow(int id)
@@ -336,7 +377,7 @@ public class WindowManager : MonoBehaviour {
             {
                    
                     //increment timer
-                    if (contracts[i,j].jobLevel != 0)
+                    if (contracts[i,j].jobLevel != 0 && !investigating)
                     {
                         contracts[i, j].incrementTimer();
                     }
@@ -351,9 +392,13 @@ public class WindowManager : MonoBehaviour {
                     {
                         if(Random.Range(0,100) < 20)
                         {
+                            //WHATS THE STORY 
+                            News.show(1);
                             investigating = true;
-                            print("daddy");
+                            showWindow = 1;
+                            GUIopen = true;
                             suspect = new Vector2(i, j);
+                            investigationTimer = 0.0f;
                             break;
                         }
                         else
@@ -364,11 +409,115 @@ public class WindowManager : MonoBehaviour {
                 }
                 if (investigating)
                 {
-                    break;
+                
+                break;
                 }
-            
+            if (investigating)
+            {
+                break;
+            }
         }
 
+        if (investigating)
+        {
+            investigationTimer += Time.deltaTime; 
+        }
+        if (investigationTimer > 15.0f && option != 0)
+        {
+            if (option == 1)
+            {
+                
+                if (contracts[(int)suspect.x, (int)suspect.y].wantedLevel == 0) { 
+                    if (Random.Range(0, 100) < 50)
+                    {
+                        contracts[(int)suspect.x, (int)suspect.y].wantedLevel = 1;
+                        NewsEvent(1);
+                    }
+                    else
+                    {
+                        NewsEvent(3);
+                    }
 
+                }
+                else if (contracts[(int)suspect.x, (int)suspect.y].wantedLevel == 1)
+                {
+                    if (Random.Range(0, 100) < 50)
+                    {
+                        contracts[(int)suspect.x, (int)suspect.y].wantedLevel = 2;
+                        Reds++;
+                        NewsEvent(2);
+                    }
+                    else
+                    {
+                        NewsEvent(3);
+                    }
+
+                }
+
+              
+            }
+            else if(option == 2)
+            {
+                
+                if (contracts[(int)suspect.x, (int)suspect.y].wantedLevel == 0)
+                {
+                    if (Random.Range(0, 100) < 35)
+                    {
+                        contracts[(int)suspect.x, (int)suspect.y].wantedLevel = 2;
+                        Reds++;
+                        NewsEvent(2);
+                    }
+                    else
+                    {
+                        NewsEvent(3);
+                    }
+                }
+                else if(contracts[(int)suspect.x, (int)suspect.y].wantedLevel == 1)
+                {
+                    contracts[(int)suspect.x, (int)suspect.y].wantedLevel = 2;
+                    Reds++;
+                    NewsEvent(2);
+                }
+               
+
+             
+            }           
+        }
+        else if(investigationTimer > 20.0f && option == 0)
+        {
+            option = 1;
+        }
+
+    }
+
+    public void OptionA()
+    {
+        News.dismiss();
+        option = Random.Range(1, 3);
+        investigationTimer = 0.0f;
+        GUIopen = false;
+    }
+
+    public void OptionB()
+    {
+        News.dismiss();
+        option = Random.Range(1, 3);
+        investigationTimer = 0.0f;
+        GUIopen = false;        
+    }
+
+    public void NewsEvent(int outcome)
+    {
+        NewsPaper.show(outcome);
+        GUIopen = true;
+        showWindow = 1;
+        
+    }
+
+    public void DismissedNewsEvent()
+    {
+        investigating = false;
+        GUIopen = false;
+        investigationTimer = 0.0f;
     }
 }
