@@ -77,7 +77,6 @@ public class gameManager : MonoBehaviour {
 					resourcePurchased(1000);
 					break;
 		}
-
 	}
 
 	public void jobComplete ()
@@ -98,25 +97,34 @@ public class gameManager : MonoBehaviour {
 
 	public void setEasy()
 	{
-		difficulty = 1;
-		jobSelected();
+		if (jobActive == false)
+		{
+			difficulty = 1;
+			jobSelected();
 
-		jobTimer = Time.time;
+			jobTimer = Time.time;
+		}
 	}
 
 	public void setMedium()
 	{
-		difficulty = 2;
-		jobSelected();
+		if (jobActive == false)
+		{
+			difficulty = 2;
+			jobSelected();
 
-		jobTimer = Time.time;
+			jobTimer = Time.time;
+		}
 	}
 
 	public void setHard()
 	{
-		difficulty = 3;
-		jobSelected();
+		if (jobActive == false)
+		{
+			difficulty = 3;
+			jobSelected();
 
-		jobTimer = Time.time;
+			jobTimer = Time.time;
+		}
 	}
 }
