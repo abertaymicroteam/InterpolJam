@@ -100,6 +100,7 @@ public class WindowManager : MonoBehaviour {
     public int Reds;
     public GUIStyle[,] gStyle;
     public Texture2D red, blue;
+    public GameObject gameover;
 
     public void Start() {
         GUIStyle[,] gStyle = new GUIStyle[4,6];
@@ -141,6 +142,10 @@ public class WindowManager : MonoBehaviour {
     public void Update() 
     {
         
+        if(Reds > 5)
+        {
+            gameover.SetActive(true);
+        }
 
         for (int i = 0; i < Continents.Length; i++)
         {
@@ -159,7 +164,11 @@ public class WindowManager : MonoBehaviour {
 
         investigation();
 
-        
+        if(investigationTimer> 30)
+        {
+            investigating = false;
+            investigationTimer = 0.0f;
+        }
 
 
     }
@@ -393,7 +402,7 @@ public class WindowManager : MonoBehaviour {
                         if(Random.Range(0,100) < 20)
                         {
                             //WHATS THE STORY 
-                            News.show(1);
+                            News.show(Random.Range(1,4));
                             investigating = true;
                             showWindow = 1;
                             GUIopen = true;
@@ -453,7 +462,7 @@ public class WindowManager : MonoBehaviour {
                     }
 
                 }
-
+                option = 0;
               
             }
             else if(option == 2)
@@ -478,14 +487,14 @@ public class WindowManager : MonoBehaviour {
                     Reds++;
                     NewsEvent(2);
                 }
-               
 
-             
+                option = 0;
+
             }           
         }
         else if(investigationTimer > 20.0f && option == 0)
         {
-            option = 1;
+            option = 0;
         }
 
     }
@@ -493,7 +502,7 @@ public class WindowManager : MonoBehaviour {
     public void OptionA()
     {
         News.dismiss();
-        option = Random.Range(1, 3);
+        option = 1;
         investigationTimer = 0.0f;
         GUIopen = false;
     }
@@ -501,7 +510,7 @@ public class WindowManager : MonoBehaviour {
     public void OptionB()
     {
         News.dismiss();
-        option = Random.Range(1, 3);
+        option = 2;
         investigationTimer = 0.0f;
         GUIopen = false;        
     }
