@@ -9,34 +9,47 @@ public class WindowManager : MonoBehaviour {
     {
         public Rect character;
         public bool pressed;
+        public int jobLevel;
         public CharacterPortrait(Rect pos)
         {
             character = pos;
             pressed = false;
+            jobLevel = 0;
         }
     }
 
     struct Continent
     {
+
+        public Rect holder;
         public Rect window;
         public Rect[] Slots;
         public CharacterPortrait[] Workers;
+        public int easyWorkers;
+        public int mediumWorkers;
+        public int hardWorkers;
 
         public Continent(Rect pos)
         {
-            Slots = new Rect[3];
+            Slots = new Rect[4];
             Workers = new CharacterPortrait[4];
 
+            holder = new Rect(0, 0, 0, 0);
             window = pos;
+
+            easyWorkers = 0;
+            mediumWorkers = 0;
+            hardWorkers = 0;
 
             Slots[0] = new Rect(pos.width / 3, 0, pos.width * 0.6f, 0);
             Slots[1] = new Rect(pos.width / 3, 0, pos.width * 0.6f, pos.height / 3);
             Slots[2] = new Rect(pos.width / 3, 0, pos.width * 0.6f, (pos.height / 3) * 2);
+            Slots[3] = new Rect(0, 0, 0, 0);
 
-            Workers[0] = new CharacterPortrait(new Rect(10, 30, 40, 40));
-            Workers[1] = new CharacterPortrait(new Rect(60, 30, 40, 40));
-            Workers[2] = new CharacterPortrait(new Rect(10, 80, 40, 40));
-            Workers[3] = new CharacterPortrait(new Rect(60, 80, 40, 40));
+            Workers[0] = new CharacterPortrait(new Rect(10, 40, 40, 40));
+            Workers[1] = new CharacterPortrait(new Rect(60, 40, 40, 40));
+            Workers[2] = new CharacterPortrait(new Rect(10, 90, 40, 40));
+            Workers[3] = new CharacterPortrait(new Rect(60, 90, 40, 40));
         }
 
         public void updateWindows()
@@ -48,6 +61,10 @@ public class WindowManager : MonoBehaviour {
                 Slots[i].x = window.width /3;
                 Slots[i].y = ((window.height-20) /3 * i)+20;
             }
+            Slots[3].width = (window.width / 3) ;
+            Slots[3].height = (window.height - 60) ;
+            Slots[3].x = 0;
+            Slots[3].y = 20;
         }
 
     }
@@ -119,18 +136,69 @@ public class WindowManager : MonoBehaviour {
         if (GUI.Button(new Rect(20, Continents[showWindow].window.height-30, 100, 20), "Hide")) { 
             showWindow = 0;
         }
+        
+        
+        GUI.Box(Continents[showWindow].Slots[0], "Easy");
+        GUI.Box(Continents[showWindow].Slots[1], "Medium");
+        GUI.Box(Continents[showWindow].Slots[2], "Hard");
+        GUI.Box(Continents[showWindow].Slots[3], "Workers");
 
-        for( int i = 0; i < Continents[showWindow].Workers.Length; i++)
+        for ( int i = 0; i < Continents[showWindow].Workers.Length; i++)
         {
             if (Continents[showWindow].Workers[i].character.Contains(Event.current.mousePosition))
             {
+                
                 if (Event.current.type == EventType.MouseDown)
                 {
-                    Continents[showWindow].Workers[i].pressed = true;           
+                    Continents[showWindow].holder = Continents[showWindow].Workers[i].character;
+                    Continents[showWindow].Workers[i].pressed = true;
+
+                    switch (Continents[showWindow].Workers[i].jobLevel)
+                    {
+                        case 1:
+                            Continents[showWindow].Workers[i].jobLevel = 0;
+                            Continents[showWindow].easyWorkers--;
+                            break;
+                        case 2:
+                            Continents[showWindow].Workers[i].jobLevel = 0;
+                            Continents[showWindow].mediumWorkers--;
+                            break;
+                        case 3:
+                            Continents[showWindow].Workers[i].jobLevel = 0;
+                            Continents[showWindow].hardWorkers--;
+                            break;
+                    }    
                 }
-                if (Event.current.type == EventType.MouseUp)
+                if(Event.current.type == EventType.MouseUp)
                 {
                     Continents[showWindow].Workers[i].pressed = false;
+
+                    if (Continents[showWindow].Slots[0].Contains(Event.current.mousePosition))
+                    {
+                        Continents[showWindow].Workers[i].character.y = (Continents[showWindow].Slots[0].y + Continents[showWindow].Slots[0].height / 2) - Continents[showWindow].Workers[i].character.height / 2;
+                        Continents[showWindow].easyWorkers++;
+                        Continents[showWindow].Workers[i].jobLevel = 1;
+                    }
+                    else if (Continents[showWindow].Slots[1].Contains(Event.current.mousePosition))
+                    {
+                        Continents[showWindow].Workers[i].character.y = (Continents[showWindow].Slots[1].y + Continents[showWindow].Slots[1].height / 2) - Continents[showWindow].Workers[i].character.height / 2;
+                        Continents[showWindow].mediumWorkers++;
+                        Continents[showWindow].Workers[i].jobLevel = 2;
+                    }
+                    else if (Continents[showWindow].Slots[2].Contains(Event.current.mousePosition))
+                    {
+                        Continents[showWindow].Workers[i].character.y = (Continents[showWindow].Slots[2].y + Continents[showWindow].Slots[2].height / 2) - Continents[showWindow].Workers[i].character.height / 2;
+                        Continents[showWindow].hardWorkers++;
+                        Continents[showWindow].Workers[i].jobLevel = 3;
+                    }
+                    else if (Continents[showWindow].Slots[3].Contains(Event.current.mousePosition))
+                    {
+                        
+                    }
+                    else
+                    {
+                        Continents[showWindow].Workers[i].character = Continents[showWindow].holder;
+                    }
                 }
             }
 
@@ -144,9 +212,9 @@ public class WindowManager : MonoBehaviour {
             Continents[showWindow].updateWindows();
             
             GUI.Button(Continents[showWindow].Workers[i].character, "Char");
-            GUI.Button(Continents[showWindow].Slots[0], "Easy");
-            GUI.Button(Continents[showWindow].Slots[1], "Medium");
-            GUI.Button(Continents[showWindow].Slots[2], "Hard");
+            
+
+           
         }
     }
 
