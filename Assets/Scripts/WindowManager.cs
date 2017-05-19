@@ -56,10 +56,10 @@ public class WindowManager : MonoBehaviour {
             Slots[2] = new Rect(pos.width / 3, 0, pos.width * 0.6f, (pos.height / 3) * 2);
             Slots[3] = new Rect(0, 0, 0, 0);
 
-            Workers[0] = new CharacterPortrait(new Rect(10, 40, 40, 40));
-            Workers[1] = new CharacterPortrait(new Rect(60, 40, 40, 40));
-            Workers[2] = new CharacterPortrait(new Rect(10, 90, 40, 40));
-            Workers[3] = new CharacterPortrait(new Rect(60, 90, 40, 40));
+            Workers[0] = new CharacterPortrait(new Rect(10, 40, 80, 80));
+            Workers[1] = new CharacterPortrait(new Rect(90, 40, 80, 80));
+            Workers[2] = new CharacterPortrait(new Rect(10, 130, 80, 80));
+            Workers[3] = new CharacterPortrait(new Rect(90, 130, 80, 80));
 
         }
 
@@ -99,13 +99,14 @@ public class WindowManager : MonoBehaviour {
     public int option;
     public int Reds;
     public GUIStyle[,] gStyle;
-    public Texture2D red, blue;
+    public Texture2D red, blue, horry, jock, michel, jimmy;
     public GameObject gameover;
+    public int imageCounter;
 
     public void Start() {
         GUIStyle[,] gStyle = new GUIStyle[4,6];
 
-   
+        imageCounter = 0;
         Reds = 0;
 
         Rect[] boxes = new Rect[4];
@@ -141,33 +142,36 @@ public class WindowManager : MonoBehaviour {
     }
     public void Update() 
     {
-        
-        if(Reds > 5)
+
+        if (Reds > 4)
         {
             gameover.SetActive(true);
+            investigating = true;
         }
-
-        for (int i = 0; i < Continents.Length; i++)
+        else
         {
-            Continents[i].window.width = Screen.width * 0.5f;
-            Continents[i].window.height = (Screen.height / 9) * 4;
-            Continents[i].window.x = (Screen.width - Continents[i].window.width) / 2;
-            Continents[i].window.y = ((Screen.height - Continents[i].window.height) / 2) - (Screen.height / 9);
-            
-        }
+            for (int i = 0; i < Continents.Length; i++)
+            {
+                Continents[i].window.width = Screen.width * 0.5f;
+                Continents[i].window.height = (Screen.height / 9) * 4;
+                Continents[i].window.x = (Screen.width - Continents[i].window.width) / 2;
+                Continents[i].window.y = ((Screen.height - Continents[i].window.height) / 2) - (Screen.height / 9);
 
-        Windows[1].width = Screen.width * 0.5f;
-        Windows[1].height = (Screen.height / 9) * 4;
-        Windows[1].x = (Screen.width - Windows[1].width) / 2;
-        Windows[1].y = ((Screen.height - Windows[1].height) / 2) - (Screen.height / 9);
+            }
+
+            Windows[1].width = Screen.width * 0.5f;
+            Windows[1].height = (Screen.height / 9) * 4;
+            Windows[1].x = (Screen.width - Windows[1].width) / 2;
+            Windows[1].y = ((Screen.height - Windows[1].height) / 2) - (Screen.height / 9);
 
 
-        investigation();
+            investigation();
 
-        if(investigationTimer> 30)
-        {
-            investigating = false;
-            investigationTimer = 0.0f;
+            if (investigationTimer > 30)
+            {
+                investigating = false;
+                investigationTimer = 0.0f;
+            }
         }
 
 
@@ -215,9 +219,9 @@ public class WindowManager : MonoBehaviour {
             showWindow = 0;
         }
 
-        GUI.Box(new Rect( Continents[showWindow].window.width / 3, 20  , (Continents[showWindow].window.width / 3) * 2, (Continents[showWindow].window.height - 20) / 3), "Easy");
-        GUI.Box(new Rect(Continents[showWindow].window.width / 3, (((Continents[showWindow].window.height) - 20) / 3 ) + 20, (Continents[showWindow].window.width / 3) * 2, (Continents[showWindow].window.height - 20) / 3), "Medium");
-        GUI.Box(new Rect(Continents[showWindow].window.width / 3, (((Continents[showWindow].window.height) - 20) / 3 * 2) + 20, (Continents[showWindow].window.width / 3) * 2, (Continents[showWindow].window.height - 20) / 3), "Hard");
+        GUI.Box(new Rect( Continents[showWindow].window.width / 3, 20  , (Continents[showWindow].window.width / 3) * 2, (Continents[showWindow].window.height - 20) / 3), "Easy - $250");
+        GUI.Box(new Rect(Continents[showWindow].window.width / 3, (((Continents[showWindow].window.height) - 20) / 3 ) + 20, (Continents[showWindow].window.width / 3) * 2, (Continents[showWindow].window.height - 20) / 3), "Medium - $500");
+        GUI.Box(new Rect(Continents[showWindow].window.width / 3, (((Continents[showWindow].window.height) - 20) / 3 * 2) + 20, (Continents[showWindow].window.width / 3) * 2, (Continents[showWindow].window.height - 20) / 3), "Hard - $1000");
         GUI.Box(new Rect(0,20,Continents[showWindow].window.width/3, Continents[showWindow].window.height -60), "Workers");
 
         for ( int i = 0; i < 4; i++)
@@ -352,7 +356,26 @@ public class WindowManager : MonoBehaviour {
             Continents[showWindow].updateWindows();
             if (Continents[showWindow].Workers != null)
             {
-                GUI.Button(Continents[showWindow].Workers[i].character, "Char");
+                switch (imageCounter)
+                {
+                    case 0:
+                        GUI.Button(Continents[showWindow].Workers[i].character, horry, "Char");
+                        break;
+                    case 1:
+                        GUI.Button(Continents[showWindow].Workers[i].character, jock, "Char");
+                        break;
+                    case 2:
+                        GUI.Button(Continents[showWindow].Workers[i].character, michel, "Char");
+                        break;
+                    case 3:
+                        GUI.Button(Continents[showWindow].Workers[i].character, jimmy, "Char");
+                        break;
+                }
+                imageCounter++;
+                if (imageCounter > 3)
+                {
+                    imageCounter = 0;
+                }
             }
             GUI.color = Color.white;
         }
@@ -501,6 +524,7 @@ public class WindowManager : MonoBehaviour {
 
     public void OptionA()
     {
+        gameObject.GetComponent<AudioSource>().Play();
         News.dismiss();
         option = 1;
         investigationTimer = 0.0f;
@@ -509,6 +533,7 @@ public class WindowManager : MonoBehaviour {
 
     public void OptionB()
     {
+        gameObject.GetComponent<AudioSource>().Play();
         News.dismiss();
         option = 2;
         investigationTimer = 0.0f;
@@ -525,6 +550,7 @@ public class WindowManager : MonoBehaviour {
 
     public void DismissedNewsEvent()
     {
+        gameObject.GetComponent<AudioSource>().Play();
         investigating = false;
         GUIopen = false;
         investigationTimer = 0.0f;

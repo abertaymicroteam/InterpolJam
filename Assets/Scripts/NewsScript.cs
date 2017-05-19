@@ -5,7 +5,7 @@ using UnityEngine;
 public class NewsScript : MonoBehaviour {
 
     public WindowManager winMan;
-
+    public AudioSource audioSource;
     public Sprite escape, suspicious, caught;
 	// Use this for initialization
 	void Start () {
@@ -20,8 +20,9 @@ public class NewsScript : MonoBehaviour {
 
     public void dismiss()
     {
+        audioSource.Play();
         gameObject.SetActive(false);
-        winMan.DismissedNewsEvent();
+        winMan.DismissedNewsEvent();       
     }
 
     public void show(int level)

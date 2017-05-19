@@ -6,7 +6,8 @@ public class Continentclicker : MonoBehaviour {
 
 
     public WindowManager winMan;
-
+ 
+    
 	// Use this for initialization
 	void Start () {
 		
@@ -25,6 +26,7 @@ public class Continentclicker : MonoBehaviour {
                 if (hit)
                 {
                     hit.transform.GetComponent<popUp>().call();
+                    gameObject.GetComponent<AudioSource>().Play();
                 }
             }
         }
